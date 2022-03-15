@@ -1,0 +1,70 @@
+
+    <div class="site-navbar py-2">
+        <div class="container">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="logo">
+              <div class="site-logo">
+                <a href="{% url 'index' %}" class="js-logo-clone">Yuliana</a>
+              </div>
+            </div>
+            <div class="main-nav d-none d-lg-block">
+              <nav class="site-navigation text-right text-md-center" role="navigation">
+                <ul class="site-menu js-clone-nav d-none d-lg-block">
+                  <li><a href="{% url 'index' %}">Home</a></li>
+                  <li><a href="{% url 'store' %}">Store</a></li>
+                  <li class="has-children">
+                    <a href="#">Categories</a>
+                    
+                    <ul class="dropdown">
+                      <li><a href="{% url 'store' %}">All Products</a></li>
+                      {% for category in links %}
+                        <li><a href="{{ category.get_slug_url }}">{{ category.category_Name }}</a></li>
+                      {% endfor %}
+                    </ul>
+                    
+                  </li>
+                  <li>
+                  <form action="{% url 'search' %}" class="search" method='GET'>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="keyword">
+                        
+                        <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="icon-search"></i>
+                        </button>
+                        </div>
+                    </div>
+                </form>
+                </li>
+                </ul>
+              </nav>
+            </div>
+            <div class="icons">
+              <a href="{% url 'cart' %}" class="icons-btn d-inline-block bag">
+                <span class="icon-shopping-bag"></span>
+                <span class="number">{{ cart_count }}</span>
+              </a>
+              <a href="{% url 'login' %}" class="icons-btn d-inline-block bag">
+                <span class="icon-user"></span>
+                <!--<span class="number">{{ cart_count }}</span>-->
+              </a>
+              <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span
+                  class="icon-menu"></span></a>
+                  {% if user.id is None %}
+                  <div>
+                      <small class="title text-muted">Welcome User</small>
+                  </div>
+                {% else %}
+                  <div>
+                      <small class="title text-muted">Welcome {{ user.first_name }}</small>
+                      <div> 
+                          <a href="{% url 'logout' %}">Log Out</a>
+                      </div>
+                  </div>
+                  {% endif %}
+            </div>
+            <!--User Registration--> 
+          </div>
+        </div>
+      </div>
+    

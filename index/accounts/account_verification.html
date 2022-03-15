@@ -1,0 +1,11 @@
+{% autoescape off %}
+
+Hi {{ user.first_name }},
+
+Please find the below link for the account registration.
+
+http://{{domain}}{% url 'activate' uidb64=uid token=token %}
+
+
+
+{% endautoescape %}
