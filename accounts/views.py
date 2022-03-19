@@ -10,8 +10,8 @@ from django.template.loader import render_to_string
 from django.contrib import messages, auth
 from carts.models import Cart, CartItem
 from carts.views import _cart_id
-
 from django.contrib.auth.decorators import login_required
+import requests
 
 # Create your views here.
 def register(request):
@@ -66,7 +66,17 @@ def login(request):
             except:
                 pass
             auth.login(request, user)
-            messages.success(request, 'You are now logged in.')
+            #messages.success(request, 'You are now logged in.')
+            url = request.META.get('HTTP_REFERER')
+            try:
+                query = requests.utils.urlparse(url).query
+                #Spliting the query
+                params = dict(x.split('=') for x in query.split('&') )
+                if 'next' in params:
+                    pageNext = params['next']
+                    return redirect(pageNext)
+            except:
+                return redirect('index')
         else:
             messages.error(request, 'Invalid login')
             return redirect('login')
@@ -77,7 +87,7 @@ def login(request):
 @login_required(login_url = 'login')
 def logout(request):
     auth.logout(request)
-    messages.success(request, 'You are now logged out')
+    #messages.success(request, 'You are now logged out')
     return redirect('login')
 
 

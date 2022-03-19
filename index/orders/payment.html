@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{%  block content  %}
+
+{% load static %}
+
+<style>
+    .hi {
+        height: 20%;
+        width: 20%;
+      }
+</style>
+
+
+
+<section class="section-content padding-y bg">
+  <div class="container">
+
+    <!-- ============================ COMPONENT 1 ================================= -->
+    <!--Message-->
+  
+    <div class="row">
+      <aside class="col-lg-6">
+        <div class="card">
+          <h5 class="card-header text-black font-weight-bold">Billing Address</h5>
+          <div class="card-body">
+            <p class="card-text mb-0 text-dark">{{ order.full_name }}</p>
+            <p class="card-text mb-0 text-dark">{{ order.full_address }}</p>
+            <p class="card-text mb-0 text-dark">{{ order.email }}</p>
+            <p class="card-text mb-0 text-dark">{{ order.phone_number }}</p>
+          </div>
+        </div>
+        <br>
+        <div class="card">
+          <h5 class="card-header  text-black font-weight-bold">Payment Method</h5>
+          <div class="card-body">
+            <p class="card-text  text-dark">PayPal</p>
+          </div>
+        </div>
+        <br>
+        <div class="card">
+          <h5 class="card-header text-black font-weight-bold">Check Product</h5>
+          <div class="card-body">
+            <table class="table table-borderless table-shopping-cart">
+              <thead class="text-muted">
+                <tr class="small text-uppercase font-weight-bold">
+                  <th scope="col text-dark">Product</th>
+                  <th scope="col text-dark" width="120">Quantity</th>
+                  <th scope="col text-dark" width="120">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                {% for cart_item in cart_items %}
+                <tr>
+                  <td>
+                    <figure>
+                      <div class="aside"><img src="{{ cart_item.product.images.url }}" class="hi"></div>
+                      <figcaption class="info text-dark ">
+                        <a href="{{ cart_item.product.get_url }}"
+                          class="title text-dark">{{ cart_item.product.product_Name }}</a>
+                      </figcaption>
+                    </figure>
+                  </td>
+                  <td>
+                    <label  class="text-dark" for="">{{ cart_item.quantity }}</label>
+                  </td>
+                  <td>
+                    <div class="price-wrap">
+                      <var class="price text-dark">Nrs. {{ cart_item.sub_total }}</var>
+                      
+                    </div> <!-- price-wrap .// -->
+                  </td>
+                </tr>
+                {% endfor %}
+
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </aside>
+      <aside class="col-md-6">
+        <div class="row mb-5">
+          <div class="col-md-12">
+            <h2 class="h3 mb-3 text-black font-weight-bold ">Your Order</h2>
+            <div class="p-3 p-lg-5 border">
+              <table class="table site-block-order-table mb-5">
+                <thead>
+                    <div class="text-center">
+                      <th>Product</th>
+                      <th>Quantity</th>
+                      <th>Total</th>
+                  </div>  
+                </thead>
+                <tbody>
+                  {% for cart_item in cart_items %}
+                  <tr>
+                      <td>
+                          <label>{{ cart_item.product.product_Name }}</label>   
+                      </td>
+                      <td> 
+                          <label for="">{{ cart_item.quantity }}</label>
+                        </td>
+                      <td> 
+                          <div class="price-wrap"> 
+                              <var class="price">Nrs. {{ cart_item.sub_total }}</var> 
+  
+                          </div> <!-- price-wrap .// -->
+                      </td>
+                  </tr>
+                  {% endfor %}
+                  <tr>
+                      <td class="text-black font-weight-bold"><strong>Order Total</strong></td>
+                      <td></td>
+                      <td class="text-black font-weight-bold"><strong>{{grand_Total}}</strong></td>
+                    </tr>
+              </table>
+
+
+               <!-- Set up a container element for the button -->
+                <div id="paypal-button-container">
+
+
+                </div>
+
+
+            </div>
+          </div>
+          
+        </div>
+        
+    </aside> 
+
+
+    </div> 
+
+  </div>
+  
+</section>
+
+
+    <script>
+        amount = "{{grand_Total}}"
+        // Render the PayPal button into #paypal-button-container
+        paypal.Buttons({
+
+            // Set up the transaction
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '22'
+                        }
+                    }]
+                });
+            },
+
+            // Finalize the transaction
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(orderData) {
+                    // Successful capture! For demo purposes:
+                    console.log(details)
+                    alert('Transaction '+ details.payer.name.given_name + '!');
+
+                });
+            }
+
+
+        }).render('#paypal-button-container');
+    </script>
+
+{% endblock %}

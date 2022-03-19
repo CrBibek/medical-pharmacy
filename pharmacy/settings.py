@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'accounts',
     'store',
     'carts',
+    'orders',
 ]
 
 MIDDLEWARE = [
@@ -149,6 +150,9 @@ JAZZMIN_SETTINGS = {
         {"name": "Store",  "url": "http://127.0.0.1:8000/adminstore/product/", "permissions": ["auth.view_user"]},
         {"name": "Carts",  "url": "http://127.0.0.1:8000/admincarts/cart/", "permissions": ["auth.view_user"]},
         {"name": "CartItem",  "url": "http://127.0.0.1:8000/admincarts/cartitem/", "permissions": ["auth.view_user"]},
+        {"name": "Payment",  "url": "http://127.0.0.1:8000/adminorders/payment/", "permissions": ["auth.view_user"]},
+        {"name": "Order",  "url": "http://127.0.0.1:8000/adminorders/order/", "permissions": ["auth.view_user"]},
+        {"name": "Order Product",  "url": "http://127.0.0.1:8000/adminorders/orderproduct/", "permissions": ["auth.view_user"]},
     ],
     
     # Title on the brand (19 chars max) (defaults to current_admin_site.site_header if absent or None)
