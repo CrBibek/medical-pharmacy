@@ -53,9 +53,6 @@ def payment(request):
     # Clear Cart after payement is successful
     CartItem.objects.filter(user=request.user).delete()
     
-    
-    
-    
     # Send Ordered Mail to customer
     mail_subject = 'Thank you'
     message = render_to_string('orders/receive_order.html', {
@@ -65,12 +62,11 @@ def payment(request):
     to_email = request.user.email
     send_email = EmailMessage(mail_subject, message, to=[to_email])
     send_email.send()
-    
-    return render(request, 'orders/payment.html')
 
     # Send Order Data
     data = {
-        
+        'order_number': order.order_number,
+        'transID': payment.payment_id,
     }
     return JsonResponse(data)
 
@@ -128,4 +124,27 @@ def place_order(request, total=0, quantity=0):
         return redirect('checkout')
     
 def complete_order(request):
-    return render(request, 'orders/complete_order.html')
+    order_number = request.GET.get('order_number')
+    transID = request.GET.get('payment_id')
+
+    try:
+        order = Order.objects.get(order_number=order_number, is_ordered=True)
+        ordered_products = OrderProduct.objects.filter(order_id=order.id)
+
+        subtotal = 0
+        for i in ordered_products:
+            subtotal += i.price * i.quantity
+
+        payment = Payment.objects.get(payment_id=transID)
+
+        context = {
+            'order': order,
+            'ordered_products': ordered_products,
+            'order_number': order.order_number,
+            'transID': payment.payment_id,
+            'payment': payment,
+            'subtotal': subtotal,
+        }
+        return render(request, 'orders/complete_order.html', context)
+    except (Payment.DoesNotExist, Order.DoesNotExist):
+        return redirect('index')
