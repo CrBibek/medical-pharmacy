@@ -1,27 +1,78 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, JsonResponse
 from carts.models import CartItem
+from .forms import OrderForm
+import datetime
+from .models import Order, Payment, OrderProduct
+import json
 from store.models import Product
-from . forms import OrderForm
-import datetime 
-from . models import Order, OrderProduct, Payment
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 
 # Create your views here.
 
 def payment(request):
     
+    body = json.loads(request.body)
+    order = Order.objects.get(user=request.user, is_ordered=False, order_number=body['orderID'])
+   
+    payment = Payment(
+        user = request.user,
+        payment_id = body['transID'],
+        payment_method = body['payment_method'],
+        amount = order.order_total,
+        status = body['status'],
+    )
+    payment.save()
+    order.payment = payment
+    order.is_ordered = True
+    order.save()
     
+    
+    
+    #Moving all the ordered item to order product table
     cart_items = CartItem.objects.filter(user=request.user)
+    
     for item in cart_items:
         orderproduct = OrderProduct()
-        orderproduct.quantity = item.quantity
+        orderproduct.order_id = order.id
+        orderproduct.payment = payment
+        orderproduct.user_id = request.user.id
         orderproduct.product_id = item.product_id
-        
-        
+        orderproduct.quantity = item.quantity
+        orderproduct.price = item.product.price
+        orderproduct.ordered = True
+        orderproduct.save()
+    
+        # Inventory Management
+        # Reduce the quantity of items after it is sold
         product = Product.objects.get(id=item.product_id)
         product.stock -= item.quantity
         product.save()
+        
+    # Clear Cart after payement is successful
+    CartItem.objects.filter(user=request.user).delete()
+    
+    
+    
+    
+    # Send Ordered Mail to customer
+    mail_subject = 'Thank you'
+    message = render_to_string('orders/receive_order.html', {
+        'user': request.user,
+        'order': order,
+    })
+    to_email = request.user.email
+    send_email = EmailMessage(mail_subject, message, to=[to_email])
+    send_email.send()
     
     return render(request, 'orders/payment.html')
+
+    # Send Order Data
+    data = {
+        
+    }
+    return JsonResponse(data)
 
 def place_order(request, total=0, quantity=0):
     current_user = request.user
@@ -75,3 +126,6 @@ def place_order(request, total=0, quantity=0):
             return render(request, 'orders/payment.html', context)
     else:
         return redirect('checkout')
+    
+def complete_order(request):
+    return render(request, 'orders/complete_order.html')

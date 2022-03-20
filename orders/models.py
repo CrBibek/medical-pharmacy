@@ -7,7 +7,7 @@ class Payment(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
     payment_id = models.CharField(max_length=255)
     payment_method = models.CharField(max_length=255)
-    amount = models.CharField(max_length=255)
+    amount = models.CharField(max_length=255, null=True)
     status = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -62,4 +62,4 @@ class OrderProduct(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.product.product_name
+        return self.product.product_Name
