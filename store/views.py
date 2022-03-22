@@ -1,4 +1,3 @@
-from urllib import request
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from category.models import Category
@@ -64,4 +63,12 @@ def search(request):
     }
     return render(request, 'store/store.html', context)
 
+
+
+
+
+
+
+
+    
 

@@ -2,13 +2,19 @@ from django.db import models
 from category.models import Category
 from django.urls import reverse
 from django.core.validators import MinValueValidator
-
+from decimal import Decimal
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 # Create your models here.
 
 class Product(models.Model):
     product_Name = models.CharField(max_length=250, unique=True)
     slug = models.SlugField(max_length=250, unique=True)
-    price = models.IntegerField()
+    price = models.DecimalField(
+        max_digits=15,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))]
+    )
     images = models.ImageField(upload_to='photos/products')
     description = models.TextField(max_length=1000)
     stock = models.IntegerField()
@@ -24,3 +30,5 @@ class Product(models.Model):
     
     def __str__(self):
         return self.product_Name
+    
+

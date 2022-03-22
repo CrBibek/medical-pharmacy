@@ -36,7 +36,7 @@
           <div class="col-sm-6 col-lg-4 text-center item mb-4">
             <a href="{{ product.get_url }}"> <img src="{{product.images.url}}" alt="Image"></a>
             <h3 class="text-dark"><a href="{{ product.get_url }}">{{product.product_Name}}</a></h3>
-            <p class="price">Nrs. {{product.price}}<del></p>
+            <p class="price">$ {{product.price}}<del></p>
           </div>
           {% endfor %}
         </div>

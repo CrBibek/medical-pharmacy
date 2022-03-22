@@ -50,6 +50,17 @@ def payment(request):
         product.stock -= item.quantity
         product.save()
         
+        if product.stock <= 5:
+            mail_subject = 'Low Quantity'
+            message = render_to_string('orders/lowquantity.html', {
+                'product': product,
+            })
+            to_email = 'bibekniroula3@gmail.com'
+            send_email = EmailMessage(mail_subject, message, to=[to_email])
+            send_email.send()
+        else:
+            pass
+        
     # Clear Cart after payement is successful
     CartItem.objects.filter(user=request.user).delete()
     
@@ -62,6 +73,8 @@ def payment(request):
     to_email = request.user.email
     send_email = EmailMessage(mail_subject, message, to=[to_email])
     send_email.send()
+    
+   
 
     # Send Order Data
     data = {

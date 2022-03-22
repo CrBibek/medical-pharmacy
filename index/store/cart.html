@@ -48,7 +48,7 @@
                   <td class="product-name">
                     <a href="{{ cart_item.product.get_url }}" class="h5 text-black">{{ cart_item.product.product_Name }}</a>
                   </td>
-                  <td>Nrs. {{ cart_item.product.price }}</td>
+                  <td>$ {{ cart_item.product.price }}</td>
                   <td>
                     <div class="input-group mb-3" style="max-width: 120px;">
                       <div class="input-group-prepend">
@@ -64,7 +64,7 @@
                     </div>
   
                   </td>
-                  <td>Nrs. {{ cart_item.sub_total }}</td>
+                  <td>$ {{ cart_item.sub_total }}</td>
                   <td><a href="{% url 'remove_item' cart_item.product.id cart_item.id %}" class="btn btn-primary height-auto btn-sm">X</a></td>
                 </tr>
                 {% endfor %}
@@ -94,7 +94,7 @@
                   <span class="text-black">Total</span>
                 </div>
                 <div class="col-md-6 text-right">
-                  <strong class="text-black">Nrs. {{grand_Total}}</strong>
+                  <strong class="text-black">$ {{grand_Total}}</strong>
                 </div>
               </div>
   
